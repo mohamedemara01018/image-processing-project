@@ -1,0 +1,38 @@
+function output = erosion(img, seSize)
+% EROSION - Morphological erosion filter
+% Erodes the image using a structuring element
+%
+% Syntax: output = erosion(img, seSize)
+%
+% Inputs:
+%   img    - Input image (grayscale or RGB)
+%   seSize - Size of structuring element (default: 3)
+
+if nargin < 2 || isempty(seSize)
+    seSize = 3;
+end
+
+% Convert to grayscale if RGB
+if size(img, 3) == 3
+    grayImg = rgb2gray(img);
+    isColor = true;
+else
+    grayImg = img;
+    isColor = false;
+end
+
+% Create structuring element (square shape for older MATLAB)
+se = strel('square', 2*seSize+1);
+
+% Apply erosion
+if isColor
+    % Process each channel separately for color images
+    output = zeros(size(img), 'like', img);
+    for ch = 1:3
+        output(:,:,ch) = imerode(img(:,:,ch), se);
+    end
+else
+    output = imerode(grayImg, se);
+end
+
+end
